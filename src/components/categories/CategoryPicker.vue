@@ -17,7 +17,20 @@ const { query, create } = useCategories()
 const CREATE_KEY = '__create__'
 const searchQuery = ref('')
 const createModalOpen = ref(false)
-const newCategoryName = ref('')
+const newCategory = ref<{ name: string; icon: string; color: UiColor; is_income: boolean }>({
+  name: '',
+  icon: '',
+  color: 'primary',
+  is_income: false
+})
+
+const colorOptions = [
+  { label: 'Bleu', value: 'primary' },
+  { label: 'Vert', value: 'success' },
+  { label: 'Rouge', value: 'error' },
+  { label: 'Orange', value: 'warning' },
+  { label: 'Neutre', value: 'neutral' }
+]
 
 const options = computed(() => {
   const cats = (query.data.value ?? [])
@@ -36,7 +49,7 @@ const options = computed(() => {
 
 function onSelect(value: string | null) {
   if (value === CREATE_KEY) {
-    newCategoryName.value = searchQuery.value
+    newCategory.value = { name: searchQuery.value, icon: '', color: 'primary', is_income: false }
     createModalOpen.value = true
     return
   }
@@ -44,16 +57,15 @@ function onSelect(value: string | null) {
 }
 
 async function confirmCreate() {
-  if (!newCategoryName.value.trim()) return
+  if (!newCategory.value.name.trim()) return
   const cat = await create.mutateAsync({
-    name: newCategoryName.value.trim(),
-    icon: null,
-    color: 'neutral' as UiColor,
-    is_income: false
+    name: newCategory.value.name.trim(),
+    icon: newCategory.value.icon.trim() || null,
+    color: newCategory.value.color,
+    is_income: newCategory.value.is_income
   })
   emit('update:modelValue', cat.id)
   createModalOpen.value = false
-  newCategoryName.value = ''
   searchQuery.value = ''
 }
 </script>
@@ -70,22 +82,31 @@ async function confirmCreate() {
 
   <UModal v-model:open="createModalOpen" title="Nouvelle catégorie">
     <template #body>
-      <UFormField label="Nom de la catégorie">
-        <UInput
-          v-model="newCategoryName"
-          placeholder="Alimentation, Transport..."
-          class="w-full"
-          autofocus
-          @keydown.enter="confirmCreate"
-        />
-      </UFormField>
+      <div class="space-y-4">
+        <UFormField label="Nom">
+          <UInput
+            v-model="newCategory.name"
+            placeholder="Alimentation, Transport..."
+            class="w-full"
+            autofocus
+            @keydown.enter="confirmCreate"
+          />
+        </UFormField>
+        <UFormField label="Icône (emoji)">
+          <UInput v-model="newCategory.icon" placeholder="🛒" class="w-full" />
+        </UFormField>
+        <UFormField label="Couleur">
+          <USelect v-model="newCategory.color" :options="colorOptions" class="w-full" />
+        </UFormField>
+        <UCheckbox v-model="newCategory.is_income" label="C'est une catégorie de revenus" />
+      </div>
     </template>
     <template #footer>
       <div class="flex gap-2 justify-end">
         <UButton variant="ghost" color="neutral" @click="createModalOpen = false">Annuler</UButton>
         <UButton
           :loading="create.isPending.value"
-          :disabled="!newCategoryName.trim()"
+          :disabled="!newCategory.name.trim()"
           @click="confirmCreate"
         >
           Créer
