@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useReview } from '@/composables/useReview'
 
 const router = useRouter()
 const { signOut } = useAuth()
+const { query: reviewQuery } = useReview()
+
+const reviewCount = computed(() => reviewQuery.data.value?.length ?? 0)
 
 const navItems = [
   { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/dashboard' },
@@ -26,7 +31,28 @@ async function logout() {
       <div class="p-4 border-b border-gray-200 dark:border-gray-800">
         <span class="text-lg font-bold text-primary">OnlyFlooze</span>
       </div>
+
       <nav class="flex-1 p-2 space-y-1">
+        <!-- Entrée "À traiter" avec badge — toujours en premier si des transactions attendent -->
+        <RouterLink to="/review" v-slot="{ isActive }" custom>
+          <UButton
+            :variant="isActive ? 'soft' : 'soft'"
+            :color="isActive ? 'warning' : reviewCount > 0 ? 'warning' : 'neutral'"
+            class="w-full justify-start"
+            icon="i-lucide-inbox"
+            :to="'/review'"
+          >
+            <span class="flex-1 text-left">À traiter</span>
+            <UBadge
+              v-if="reviewCount > 0"
+              :label="String(reviewCount)"
+              color="warning"
+              size="xs"
+              class="ml-1"
+            />
+          </UButton>
+        </RouterLink>
+
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
@@ -44,6 +70,7 @@ async function logout() {
           />
         </RouterLink>
       </nav>
+
       <div class="p-2 border-t border-gray-200 dark:border-gray-800">
         <UButton
           variant="ghost"

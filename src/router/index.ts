@@ -34,6 +34,11 @@ export const routes = [
     path: '/categories',
     component: () => import('@/pages/CategoriesPage.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/review',
+    component: () => import('@/pages/ReviewPage.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
