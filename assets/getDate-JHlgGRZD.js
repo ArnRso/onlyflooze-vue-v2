@@ -1,0 +1,1 @@
+import{r as e}from"./differenceInCalendarDays-BZAVj6mh.js";function t(t,n){return e(t,n?.in).getDate()}export{t};
