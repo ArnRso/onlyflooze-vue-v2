@@ -1,1 +1,0 @@
-import{Ht as e,ft as t,ot as n,tn as r}from"./useAuth-CWBRxd0l.js";import{a as i}from"./Collection-DSUdPDhx.js";function a(e){let n=i({dir:r(`ltr`)});return t(()=>e?.value||n.dir?.value||`ltr`)}var o=0;function s(t,r=`reka`){if(t)return t;let a;return a=`useId`in n?e?.():i({useId:void 0}).useId?.()??`${++o}`,r?`${r}-${a}`:a}export{a as n,s as t};
