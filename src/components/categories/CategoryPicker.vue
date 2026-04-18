@@ -29,6 +29,6 @@ const options = computed(() =>
     placeholder="Catégorie..."
     :loading="loading || query.isPending.value"
     size="sm"
-    @update:model-value="emit('update:modelValue', $event)"
+    @update:model-value="emit('update:modelValue', ($event as string | null) ?? null)"
   />
 </template>

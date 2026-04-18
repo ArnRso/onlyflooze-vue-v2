@@ -12,7 +12,7 @@ function pct(row: MonthlySummaryRow): number {
   return Math.min(100, Math.round((Math.abs(row.total) / Math.abs(row.goal)) * 100))
 }
 
-function color(row: MonthlySummaryRow): string {
+function color(row: MonthlySummaryRow): 'error' | 'warning' | 'primary' {
   const p = pct(row)
   if (p >= 100) return 'error'
   if (p >= 80) return 'warning'

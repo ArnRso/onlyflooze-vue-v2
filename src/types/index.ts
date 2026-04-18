@@ -1,9 +1,11 @@
+export type UiColor = 'error' | 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'neutral'
+
 export interface Category {
   id: string
   user_id: string
   name: string
   icon: string | null
-  color: string | null
+  color: UiColor | null
   is_income: boolean
   created_at: string
 }

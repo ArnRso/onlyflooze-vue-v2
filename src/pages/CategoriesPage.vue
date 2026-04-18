@@ -2,13 +2,13 @@
 import { ref } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useCategories } from '@/composables/useCategories'
-import type { Category } from '@/types'
+import type { Category, UiColor } from '@/types'
 
 const { query, create, remove } = useCategories()
 
 const modalOpen = ref(false)
 
-const form = ref({
+const form = ref<{ name: string; icon: string; color: UiColor; is_income: boolean }>({
   name: '',
   icon: '',
   color: 'primary',
