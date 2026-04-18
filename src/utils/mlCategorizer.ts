@@ -3,9 +3,12 @@ import type { MlTrainingData, MlPrediction } from '@/types'
 
 function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
   if (a.size === 0 && b.size === 0) return 1
+  if (a.size === 0 || b.size === 0) return 0
   const intersection = new Set([...a].filter(t => b.has(t)))
-  const union = new Set([...a, ...b])
-  return intersection.size / union.size
+  // Jaccard asymétrique : score basé sur le plus petit des deux sets.
+  // Permet à "CARREFOUR MONTROUGE" de matcher "CARREFOUR" sans pénalité.
+  const minSize = Math.min(a.size, b.size)
+  return intersection.size / minSize
 }
 
 function levenshtein(a: string, b: string): number {

@@ -25,19 +25,17 @@ export function resolveBudgetMonth(txDate: Date, pattern: RecurringPattern): Dat
   if (pattern.month_end_behavior === 'last_or_first') {
     const daysInMonth = getDaysInMonth(txDate)
 
-    // TX en début de mois (1-3) → vérifier si appartient au mois précédent
-    if (day <= tolerance) {
+    // TX en début de mois (jours 1 à tolerance) → peut appartenir au mois précédent
+    // si matchesDayWindow dit que cette TX est dans la fenêtre du mois précédent
+    if (day <= tolerance && expectedDay >= 28) {
       const prevMonth = subMonths(txDate, 1)
-      const daysInPrevMonth = getDaysInMonth(prevMonth)
-      // Le jour attendu dans le mois précédent (ex: 28 ou dernier jour)
-      const effectiveExpectedDay = Math.min(expectedDay, daysInPrevMonth)
-      if (Math.abs(daysInPrevMonth - effectiveExpectedDay + day) <= tolerance) {
+      if (matchesDayWindow(txDate, pattern)) {
         return startOfMonth(prevMonth)
       }
     }
 
-    // TX en fin de mois, le mois a moins de jours que le jour attendu
-    if (expectedDay > daysInMonth && day === daysInMonth) {
+    // Mois court : dernier jour du mois accepté si le jour attendu déborde
+    if (expectedDay > daysInMonth && day >= daysInMonth - tolerance) {
       return startOfMonth(txDate)
     }
   }
