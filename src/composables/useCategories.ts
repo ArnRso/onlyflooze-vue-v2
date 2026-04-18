@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { useSupabase } from './useSupabase'
+import { useAuthStore } from '@/stores/auth.store'
 import type { Category } from '@/types'
 
 export function useCategories() {
   const { supabase } = useSupabase()
+  const authStore = useAuthStore()
   const qc = useQueryClient()
 
   const query = useQuery({
@@ -21,7 +23,11 @@ export function useCategories() {
 
   const create = useMutation({
     mutationFn: async (payload: Omit<Category, 'id' | 'user_id' | 'created_at'>) => {
-      const { data, error } = await supabase.from('categories').insert(payload).select().single()
+      const { data, error } = await supabase
+        .from('categories')
+        .insert({ ...payload, user_id: authStore.user!.id })
+        .select()
+        .single()
       if (error) throw error
       return data as Category
     },

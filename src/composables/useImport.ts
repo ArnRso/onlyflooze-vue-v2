@@ -68,6 +68,7 @@ export function useImport(accountId: Ref<string | null>) {
       const toInsert = txs
         .filter(t => !t.is_duplicate)
         .map(t => ({
+          user_id: authStore.user!.id,
           account_id: accountId.value,
           external_id: t.external_id,
           date: t.date,

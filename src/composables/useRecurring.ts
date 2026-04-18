@@ -1,11 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { useSupabase } from './useSupabase'
+import { useAuthStore } from '@/stores/auth.store'
 import type { RecurringPattern } from '@/types'
 
 type NewPattern = Omit<RecurringPattern, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'category'>
 
 export function useRecurring() {
   const { supabase } = useSupabase()
+  const authStore = useAuthStore()
   const qc = useQueryClient()
 
   const query = useQuery({
@@ -25,7 +27,7 @@ export function useRecurring() {
     mutationFn: async (payload: NewPattern) => {
       const { data, error } = await supabase
         .from('recurring_patterns')
-        .insert(payload)
+        .insert({ ...payload, user_id: authStore.user!.id })
         .select('*, category:categories(*)')
         .single()
       if (error) throw error
