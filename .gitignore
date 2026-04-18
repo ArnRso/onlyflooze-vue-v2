@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+.env.local
+auto-imports.d.ts
+components.d.ts
+.nuxt-ui/
