@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { useSupabase } from './useSupabase'
 import { useAuthStore } from '@/stores/auth.store'
@@ -18,6 +19,7 @@ export function useCategories() {
       if (error) throw error
       return data
     },
+    enabled: computed(() => !!authStore.user),
     staleTime: 5 * 60 * 1000
   })
 
